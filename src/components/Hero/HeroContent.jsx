@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import {
+    ArrowDown,
+    ArrowUpRight,
+    Download,
+} from "lucide-react";
 
 function HeroContent() {
     const text = "FULL STACK WEB DEVELOPER";
@@ -13,19 +17,32 @@ function HeroContent() {
         if (!isDeleting && displayText.length < text.length) {
             // Typing
             timeout = setTimeout(() => {
-                setDisplayText(text.slice(0, displayText.length + 1));
+                setDisplayText(
+                    text.slice(0, displayText.length + 1)
+                );
             }, 85);
-        } else if (!isDeleting && displayText.length === text.length) {
-            // Small pause after completing the text
+        } else if (
+            !isDeleting &&
+            displayText.length === text.length
+        ) {
+            // Pause after completing the text
             timeout = setTimeout(() => {
                 setIsDeleting(true);
             }, 900);
-        } else if (isDeleting && displayText.length > 0) {
+        } else if (
+            isDeleting &&
+            displayText.length > 0
+        ) {
             // Deleting
             timeout = setTimeout(() => {
-                setDisplayText(text.slice(0, displayText.length - 1));
+                setDisplayText(
+                    text.slice(0, displayText.length - 1)
+                );
             }, 45);
-        } else if (isDeleting && displayText.length === 0) {
+        } else if (
+            isDeleting &&
+            displayText.length === 0
+        ) {
             // Start typing again
             timeout = setTimeout(() => {
                 setIsDeleting(false);
@@ -62,6 +79,7 @@ function HeroContent() {
             {/* Buttons */}
             <div className="hero-actions">
 
+                {/* View Projects */}
                 <a
                     href="#projects"
                     className="hero-primary-button"
@@ -71,6 +89,7 @@ function HeroContent() {
                     <ArrowUpRight size={17} />
                 </a>
 
+                {/* Contact */}
                 <a
                     href="#contact"
                     className="hero-secondary-button"
@@ -82,6 +101,20 @@ function HeroContent() {
 
             </div>
 
+            {/* Resume */}
+            <a
+                href="/Faizan-Chougule-Resume.pdf"
+                download="Faizan-Chougule-Resume.pdf"
+                className="hero-resume-button"
+            >
+                <span className="hero-resume-icon">
+                    <Download size={15} />
+                </span>
+
+                <span>Download Resume</span>
+
+                {/* <ArrowDown size={14} className="hero-resume-arrow" /> */}
+            </a>
             {/* Tech Row */}
             <div className="hero-tech-row">
 
