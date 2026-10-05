@@ -1,12 +1,14 @@
 const express = require("express");
 const cors = require("cors");
-const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const contactRoutes = require("./routes/contactRoutes");
+
 const app = express();
 
 const PORT = process.env.PORT || 5000;
+
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 /* =========================================
    MIDDLEWARE
@@ -14,29 +16,17 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: FRONTEND_URL,
   }),
 );
 
 app.use(express.json());
 
+/* =========================================
+   ROUTES
+========================================= */
+
 app.use("/api", contactRoutes);
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-transporter.verify((error, success) => {
-  if (error) {
-    console.log("Gmail connection failed:", error);
-  } else {
-    console.log("Gmail connection successful!");
-  }
-});
 
 /* =========================================
    TEST ROUTE
@@ -53,6 +43,6 @@ app.get("/", (req, res) => {
    SERVER
 ========================================= */
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });

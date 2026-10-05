@@ -34,7 +34,7 @@ function Contact() {
 
         try {
             const response = await fetch(
-                "http://localhost:5000/api/contact",
+                `${import.meta.env.VITE_API_URL}/api/contact`,
                 {
                     method: "POST",
                     headers: {
@@ -79,8 +79,8 @@ function Contact() {
             <div className="contact-container">
 
                 {/* =================================
-            HEADER
-        ================================= */}
+                    HEADER
+                ================================= */}
 
                 <div className="contact-heading">
                     <span className="section-eyebrow">
@@ -100,14 +100,14 @@ function Contact() {
 
 
                 {/* =================================
-            CONTACT GRID
-        ================================= */}
+                    CONTACT GRID
+                ================================= */}
 
                 <div className="contact-grid">
 
                     {/* =================================
-              CONTACT FORM
-          ================================= */}
+                        CONTACT FORM
+                    ================================= */}
 
                     <div className="contact-form-card">
 
@@ -216,8 +216,8 @@ function Contact() {
 
 
                     {/* =================================
-              CONTACT INFO
-          ================================= */}
+                        CONTACT INFO
+                    ================================= */}
 
                     <div className="contact-info">
 
@@ -315,8 +315,8 @@ function Contact() {
 
 
                 {/* =================================
-            BOTTOM CTA
-        ================================= */}
+                    BOTTOM CTA
+                ================================= */}
 
                 <div className="contact-bottom">
 
