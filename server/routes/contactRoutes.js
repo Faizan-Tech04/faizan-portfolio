@@ -1,33 +1,12 @@
 const express = require("express");
-const nodemailer = require("nodemailer");
 
 const router = express.Router();
 
 /* =========================================
-   GMAIL SMTP TRANSPORTER
+   RESEND EMAIL API
 ========================================= */
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  requireTLS: true,
-
-  family: 4,
-
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-
-  tls: {
-    minVersion: "TLSv1.2",
-  },
-
-  connectionTimeout: 30000,
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
-});
+const RESEND_API_URL = "https://api.resend.com/emails";
 
 /* =========================================
    CONTACT ROUTE
@@ -49,17 +28,37 @@ router.post("/contact", async (req, res) => {
     }
 
     /* =========================================
-       SEND EMAIL
+       CHECK RESEND API KEY
     ========================================= */
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
-      replyTo: email,
+    if (!process.env.RESEND_API_KEY) {
+      console.error("RESEND_API_KEY is missing.");
 
-      subject: `New Portfolio Message from ${name}`,
+      return res.status(500).json({
+        success: false,
+        message: "Email service is not configured.",
+      });
+    }
 
-      text: `
+    /* =========================================
+       SEND EMAIL USING RESEND API
+    ========================================= */
+
+    const response = await fetch(RESEND_API_URL, {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      },
+
+      body: JSON.stringify({
+        from: "Faizan Portfolio <onboarding@resend.dev>",
+        to: [process.env.EMAIL_USER],
+        reply_to: email,
+        subject: `New Portfolio Message from ${name}`,
+
+        text: `
 You received a new message from your portfolio.
 
 Name: ${name}
@@ -67,21 +66,39 @@ Email: ${email}
 
 Message:
 ${message}
-      `,
+        `,
+      }),
     });
+
+    const data = await response.json();
+
+    /* =========================================
+       RESEND ERROR
+    ========================================= */
+
+    if (!response.ok) {
+      console.error("Resend API error:", data);
+
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send message.",
+      });
+    }
 
     /* =========================================
        SUCCESS RESPONSE
     ========================================= */
 
-    res.status(200).json({
+    console.log("Email sent successfully:", data);
+
+    return res.status(200).json({
       success: true,
       message: "Message sent successfully!",
     });
   } catch (error) {
     console.error("Email sending error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to send message.",
     });
